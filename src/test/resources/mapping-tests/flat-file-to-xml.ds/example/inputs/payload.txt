@@ -1,0 +1,9 @@
+order12345,"04/11/2020 14:35:00"
+"Kym Chillcot","6904 Vera Trail","White Plains",NY,10633,"(845) 568-0141","kchillcot0@washingtonpost.com"
+shipment1,"04/21/2020 09:10:00"
+"Ava McGunley","5488 Katie Plaza","Las Vegas",NV,89105,"(702) 594-4721",amcgunley2@forbes.com
+"Hand Sanitizer",hs123,2
+shipment2,"04/23/2020 08:42:00"
+"Ava McGunley","5488 Katie Plaza","Las Vegas",NV,89105,"(702) 594-4721",amcgunley2@forbes.com
+"Toilet Paper",tp2pl976,12
+"Face Mask",856326,10

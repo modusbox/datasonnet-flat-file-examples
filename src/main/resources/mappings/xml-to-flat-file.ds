@@ -1,0 +1,56 @@
+local formatDate(date) = DS.LocalDateTime.format(date, "yyyy-MM-dd'T'HH:mm:ss", "MM/dd/yyyy HH:mm:ss");
+local writeCSV(arr) = DS.Formats.write(arr, "application/csv", { "UseHeader": false });
+local toArray(item) = if (std.isArray(item)) then item else [item];
+
+local orderHeader = writeCSV([
+                              payload.order["@id"],
+                              formatDate(payload.order["@date"])
+                            ]);
+local billTo = writeCSV([
+                          payload.order.billTo.name["$"],
+                          payload.order.billTo.address1["$"],
+                          payload.order.billTo.city["$"],
+                          payload.order.billTo.state["$"],
+                          payload.order.billTo.zip["$"],
+                          payload.order.billTo.phone["$"],
+                          payload.order.billTo.email["$"]
+                        ]);
+
+local shipments = std.foldl( //Loop over <shipment> elements
+                            function(aggregate, shipment)
+                              aggregate + [ //For each shipment
+                                writeCSV([ //Create shipment header line
+                                           shipment["@id"],
+                                           formatDate(shipment["@date"]),
+                                        ]) +
+                                writeCSV([ //Create ship to line
+                                          shipment.shipTo.name["$"],
+                                          shipment.shipTo.address1["$"],
+                                          shipment.shipTo.city["$"],
+                                          shipment.shipTo.state["$"],
+                                          shipment.shipTo.zip["$"],
+                                          shipment.shipTo.phone["$"],
+                                          shipment.shipTo.email["$"]
+                                        ]) +
+                                writeCSV( //Items
+                                          std.foldl( //Loop over items in the shipment
+                                            function(aggregate, item)
+                                              aggregate + [[
+                                                item["@name"],
+                                                item["@sku"],
+                                                item["@quantity"],
+                                              ]],
+                                            toArray(shipment.items.item),
+                                            [])
+                                        )
+                            ],
+                            toArray(payload.order.shipment),
+                            []);
+
+//Assemble all parts together
+std.join("", [
+               orderHeader,
+               billTo
+             ] + shipments)
+
+

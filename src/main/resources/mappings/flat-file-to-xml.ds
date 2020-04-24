@@ -1,0 +1,104 @@
+local formatDate(str) = DS.LocalDateTime.format(str, "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss");
+
+//Create an array of lines where each line is parsed as CSV
+local lines = std.foldl(
+                  function(aggregate, item)
+                    aggregate + DS.Formats.read(item, "application/csv", {"UseHeader":false}),
+                  std.split(payload, "\n"),
+                  []);
+
+//Shipments info starts from line 3
+local shipments = lines[2:];
+
+{
+  order: {
+    //Order header is line 1
+    "@id": lines[0][0],
+    "@date": formatDate(lines[0][1]),
+    //Billing information is line 2
+    billTo: {
+      name: {
+        "$": lines[1][0]
+      },
+      address1: {
+        "$": lines[1][1]
+      },
+      city: {
+        "$": lines[1][2]
+      },
+      state: {
+        "$": lines[1][3]
+      },
+      zip: {
+        "$": lines[1][4]
+      },
+      phone: {
+        "$": lines[1][5]
+      },
+      email: {
+        "$": lines[1][6]
+      }
+    },
+    shipment:
+      //First split the list of lines into two sub-arrays,
+      //each one containing lines for one shipment.
+      //We aggregate lines for each shipment in the "current" field, and then add them to the results
+      local shipmentsArray =
+        local split = std.foldl(
+            function(aggregate, item)
+              if (std.length(item) == 2) then aggregate + {//Next shipment header found, start aggregating
+                current: [item],
+                results+: super.current
+              } else aggregate + {
+                current+: [item]
+              },
+            shipments,
+            {
+              current: [],
+              results: []
+            });
+        [split.results] + [split.current];
+      //Now map each sub-array as shipment object
+      std.map(function(shipment)
+                {
+                  "@id": shipment[0][0],
+                  "@date": formatDate(shipment[0][1]),
+                  shipTo: {
+                    name: {
+                      "$": shipment[1][0]
+                    },
+                    address1: {
+                      "$": shipment[1][1]
+                    },
+                    city: {
+                      "$": shipment[1][2]
+                    },
+                    state: {
+                      "$": shipment[1][3]
+                    },
+                    zip: {
+                      "$": shipment[1][4]
+                    },
+                    phone: {
+                      "$": shipment[1][5]
+                    },
+                    email: {
+                      "$": shipment[1][6]
+                    }
+                  },
+                  items: {
+                    item: std.foldl(
+                      function(aggregate, item)
+                        aggregate + [{
+                          "@name": item[0],
+                          "@sku": item[1],
+                          "@quantity": item[2]
+                        }],
+                      shipment[2:std.length(shipment)],
+                      []
+                    )
+                  }
+                }, shipmentsArray)
+  }
+}
+

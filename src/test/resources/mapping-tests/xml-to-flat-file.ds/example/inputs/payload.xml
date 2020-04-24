@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<order id="order12345" date="2020-04-11T14:35:00">
+    <billTo>
+        <name>Kym Chillcot</name>
+        <address1>6904 Vera Trail</address1>
+        <city>White Plains</city>
+        <state>NY</state>
+        <zip>10633</zip>
+        <phone>(845) 568-0141</phone>
+        <email>kchillcot0@washingtonpost.com</email>
+    </billTo>
+    <shipment id="shipment1" date="2020-04-21T09:10:00">
+        <shipTo>
+            <name>Ava McGunley</name>
+            <address1>5488 Katie Plaza</address1>
+            <city>Las Vegas</city>
+            <state>NV</state>
+            <zip>89105</zip>
+            <phone>(702) 594-4721</phone>
+            <email>amcgunley2@forbes.com</email>
+        </shipTo>
+        <items>
+            <item name="Hand Sanitizer" sku="hs123" quantity="2"/>
+        </items>
+    </shipment>
+    <shipment id="shipment2" date="2020-04-23T08:42:00">
+        <shipTo>
+            <name>Ava McGunley</name>
+            <address1>5488 Katie Plaza</address1>
+            <city>Las Vegas</city>
+            <state>NV</state>
+            <zip>89105</zip>
+            <phone>(702) 594-4721</phone>
+            <email>amcgunley2@forbes.com</email>
+        </shipTo>
+        <items>
+            <item name="Toilet Paper" sku="tp2pl976" quantity="12"/>
+            <item name="Face Mask" sku="856326" quantity="10"/>
+        </items>
+    </shipment>
+</order>
